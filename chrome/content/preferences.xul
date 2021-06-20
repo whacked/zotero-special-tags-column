@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+<overlay id="zotero-special-tags-column-preferences"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml">
+  <prefwindow id="zotero-prefs">
+    <prefpane id="zotero-prefpane-special-tags-column"
+            insertafter="zotero-prefpane-advanced"
+            label="Special tags column">
+      <preferences id="zotero-special-tags-column-preferences">
+        <!-- the preference gets saved into prefs.js as
+             user_pref("<name>", "<input-value>") -->
+        <preference name="extensions.zotero.special-tags-column.tags-string" id="stc-tags-string" type="string" default="" />
+      </preferences>
+      <groupbox>
+        <caption label="special tags"/>
+        <hbox>
+          <label>
+          comma-separated special tags list
+          </label>
+          <textbox flex="1" preference="stc-tags-string" id="id-stc-tags-string-input" />
+        </hbox>
+        <description>
+          Put the tags you want to show up in the Special Tags column
+          here. Separate different tags with a comma, e.g.:
+          "mrna, zotero, simulated annealing" will extract 3 tags.
+          Must match *exactly*. If your string has non-ascii characters
+          you shoud run it through javascript's "escape()" function
+        </description>
+        <!-- don't know why this affects the appearance, but it does! Credit Emiliano Heynes / zotero-better-bibtex. -->
+        <label height="20px;" style="margin-bottom: 0px"/>
+      </groupbox>
+      <label height="20px;" style="margin-bottom: 0px"/>
+    </prefpane>
+  </prefwindow>
+</overlay>

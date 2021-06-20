@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<overlay id="zotero-special-tags-column-overlay"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+
+  <treecols id="zotero-items-columns-header">
+    <treecol
+      id="zotero-items-column-special-tags"
+      label="Special Tags"
+      flex="1"
+      insertafter="zotero-items-column-title"
+      zotero-persist="width ordinal hidden sortActive sortDirection"
+    />
+  </treecols>
+
+	<!-- Include the main extension logic -->
+	<script src="chrome://zotero/content/include.js"/>
+	<script src="chrome://zotero-special-tags-column/content/include.js"/>
+</overlay>

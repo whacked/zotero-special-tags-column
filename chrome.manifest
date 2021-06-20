@@ -1,0 +1,6 @@
+content	zotero-special-tags-column				chrome/content/
+locale	zotero-special-tags-column	en-US		chrome/locale/en-US/
+skin	zotero-special-tags-column	default		chrome/skin/default/
+
+overlay	chrome://zotero/content/zoteroPane.xul	chrome://zotero-special-tags-column/content/overlay.xul
+overlay	chrome://zotero/content/preferences/preferences.xul	chrome://zotero-special-tags-column/content/preferences.xul
