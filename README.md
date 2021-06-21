@@ -8,6 +8,8 @@ Download a release from the [releases page](https://github.com/whacked/zotero-sp
 
 # Example usage
 
+## designating special tags
+
 let's say you want to use 🐶 and ⛄ as column markers.
 
 ```javascript
@@ -25,11 +27,29 @@ your special tags should show up in the Special Tags column for entries that hav
 
 ![Special Tags column](doc/img/2021-06-19_Selection_002.png)
 
+## mapping existing tags to a different look
+
+if you don't want to add a new kind of tag, you can map an existing tag to display differently in the Special Tags column by using a JSON value as the input. For example:
+
+```javascript
+escape(JSON.stringify({
+    "brain": "🧠",
+    "heart": "❤",
+    "radio": "📡",
+    "fish": "🐟",
+}));
+> %7B%22brain%22%3A%22%uD83E%uDDE0%22%2C%22heart%22%3A%22%u2764%22%2C%22radio%22%3A%22%uD83D%uDCE1%22%2C%22fish%22%3A%22%uD83D%uDC1F%22%7D
+```
+
+![Special Tags mapping](doc/img/2021-06-20_Selection_001.png)
+
 # Development
 
 back up your $HOME/Zotero folder if you have one. Zotero will write to it by default. (It's possible to override the location in prefs.js, but this file is created by Zotero).
 
 if you have a [nix environment](https://nixos.org/download.html) available, clone this repository and run `nix-shell`, which should give you a ready environment that runs a bare Zotero installation in a temporary directory, with the plugin pushed into the prefs.js file. For iteration, run `rzt` from the `nix-shell` to reload the entire plugin and start the debug instance with the javascript console.
+
+when you are done, run `pack` to produce the installable xpi file.
 
 if you don't have a nix-environment, see `initialize-zotero-plugin` in [shell.nix](shell.nix) where the setup loop happens. Everything else is vanilla and trial and error.
 

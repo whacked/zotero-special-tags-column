@@ -9,21 +9,32 @@ Zotero.specialTagsColumn = new function() {
         Zotero.log("special tags column: init");
         await Zotero.Schema.schemaUpdatePromise;
 
+        var trim = (s) => {
+            return s.replace(/^\s*/, '').replace(/\s*$/, '')
+        }
+
         // returns undefined/null if no matching pref
         var prefManager = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-        var tagFilterStringPref = prefManager.getCharPref("extensions.zotero.special-tags-column.tags-string") || "";
+        var tagFilterStringPref = unescape(trim(prefManager.getCharPref("extensions.zotero.special-tags-column.tags-string") || ""));
         Zotero.log("tag filter string: " + tagFilterStringPref);
         
-        var allowedTags = {};
-        var tagFilterStringSplit = unescape(tagFilterStringPref).split(",")
-        for(var i = 0; i < tagFilterStringSplit.length; ++i) {
-            let tagFilterString = tagFilterStringSplit[i].replace(/^\s*/, '').replace(/\s*$/, '')
-            if(tagFilterString.length == 0) {
-                continue;
+        var specialTagsMapping = {};
+        if(tagFilterStringPref.startsWith("{") && tagFilterStringPref.endsWith("}")) {
+            Zotero.log("parsing settings as JSON")
+            specialTagsMapping = JSON.parse(tagFilterStringPref)
+        } else {
+            Zotero.log("parsing settings as comma-delimited string")
+            var tagFilterStringSplit = tagFilterStringPref.split(",")
+            for(var i = 0; i < tagFilterStringSplit.length; ++i) {
+                let tagFilterString = trim(tagFilterStringSplit[i])
+                if(tagFilterString.length == 0) {
+                    continue;
+                }
+                specialTagsMapping[tagFilterString] = true;
             }
-            allowedTags[tagFilterString] = true;
         }
-        Zotero.log("ALLOWED: " + JSON.stringify(allowedTags));
+
+        Zotero.log("Loaded special tags: " + JSON.stringify(specialTagsMapping));
 
         // ref better-bibtex.ts:264 $patch$ technique
         var original_getCellText = Zotero.ItemTreeView.prototype.getCellText;
@@ -39,11 +50,8 @@ Zotero.specialTagsColumn = new function() {
             }
             const tags = item._tags.map((tagItem) => {
                 // looks like it just contains the "tag" field
-                return tagItem.tag
-            }).filter((tag) => {
-                // Zotero.log("checking: " + tag)
-                return allowedTags[tag]
-            })
+                return specialTagsMapping[tagItem.tag]
+            }).filter(tag => tag)
             return tags.sort().join(", ")
         }
     };
