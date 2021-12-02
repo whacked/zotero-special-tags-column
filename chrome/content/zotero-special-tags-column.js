@@ -7,7 +7,6 @@ Zotero.specialTagsColumn = new function() {
      */
     this.init = async function () {
         Zotero.log("special tags column: init");
-        await Zotero.Schema.schemaUpdatePromise;
 
         var trim = (s) => {
             return s.replace(/^\s*/, '').replace(/\s*$/, '')
@@ -54,5 +53,7 @@ Zotero.specialTagsColumn = new function() {
             }).filter(tag => tag)
             return tags.sort().join(", ")
         }
+        
+        return Zotero.Schema.schemaUpdatePromise;
     };
 };
