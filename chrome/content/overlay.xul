@@ -1,8 +1,10 @@
 <?xml version="1.0"?>
+<?xml-stylesheet href="chrome://zotero-special-tags-column/skin/main.css" type="text/css"?>
 <overlay id="zotero-special-tags-column-overlay"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	xmlns:html="http://www.w3.org/1999/xhtml">
 
+  <!-- this might be out of use for zotero 6+? -->
   <treecols id="zotero-items-columns-header">
     <treecol
       id="zotero-items-column-special-tags"
