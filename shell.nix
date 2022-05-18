@@ -7,10 +7,12 @@ in pkgs.mkShell {
 
   buildInputs = [
     pkgs.pastel
-    pkgs.zotero
-  ];
+  ] ++ (if (pkgs.stdenv.isLinux) then [ pkgs.zotero ] else []);
 
-  shellHook = ''
+  shellHook = (if (pkgs.stdenv.isDarwin) then ''
+    export PATH=$PATH:/Applications/Zotero.app/Contents/MacOS
+  '' else ''
+  '') + ''
     shopt -s direxpand
 
     # WARNING: zotero, even with a profile override, will still save stuff in $HOME/Zotero
