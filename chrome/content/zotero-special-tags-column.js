@@ -98,9 +98,8 @@ Zotero.specialTagsColumn = new function () {
                 [{"tag":"notation"},{"tag":"dance"},{"tag":"⛄⛄⛄⛄⛄"}]
              */
             if (item.isNote() || item.isAttachment() || (item.isAnnotation != null ? item.isAnnotation() : null)) {
-                return ''
+                return null
             }
-            Zotero.log(JSON.stringify(item._tags))
             return item._tags.map((tagItem) => {
                 // looks like tagItem just contains the "tag" field
                 let tagSpec = specialTagsMapping[tagItem.tag]
@@ -116,7 +115,8 @@ Zotero.specialTagsColumn = new function () {
         }
 
         function renderSpecialTags(item) {
-            return getSpecialTags(item).sort().join(", ")
+            let specialTags = getSpecialTags(item)
+            return specialTags == null ? '' : specialTags.sort().join(", ")
         }
 
         Zotero.log("Loaded special tags: " + JSON.stringify(specialTagsMapping));
@@ -185,7 +185,6 @@ Zotero.specialTagsColumn = new function () {
             itemTree.prototype.getColumns = function () {
                 // this function calls getID and expects a number for dataKey from it
                 const columns = original_getColumns.apply(this, arguments)
-                // Zotero.log(JSON.stringify({}))
                 columns.splice(
                     columns.findIndex(column => column.dataKey === 'title') + 1,
                     0,
