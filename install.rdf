@@ -4,7 +4,7 @@
     <em:id>zotero-special-tags-column@whacked.github.io</em:id>
     <em:type>2</em:type> <!-- type=extension -->
     <em:name>ZoteroSpecialTagsColumn</em:name>
-    <em:version>0.0.3</em:version>
+    <em:version>0.0.4</em:version>
     <em:creator>whacked</em:creator>
     <em:description>Create a separate column for special tags</em:description>
     <em:homepageURL>https://github.com/whacked/zotero-special-tags-column</em:homepageURL>

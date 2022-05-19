@@ -16,6 +16,27 @@ Zotero.specialTagsColumn = new function () {
         return makeElement('span')
     }
 
+    /**
+     * currently this will support 3 kinds of configs:
+     * 1. comma-delimited string: given a string of "specialTag1, specialTag2, ..."
+     *    the plugin will match "specialTag1", "specialTag2", etc exactly on items containing those tags
+     * 2. JSON mapping of string --> string
+     *    given a mapping of
+     *    - "specialTag1": "renamed1"
+     *    - "specialTag2": "other2"
+     *    it will match items with "specialTag1" and "specialTag2", and render them as
+     *    "renamed1", "other2" respectively
+     * 3. JSON mapping of string --> mapping of string-->string
+     *    given a mapping of
+     *    - "specialTag1": {
+     *          "style": {
+     *              "border": "2px solid blue"
+     *          },
+     *          "innerText": "newTagContent"
+     *      }
+     *    it will match "specialTag1" and render "newTagContent" with a blue border around it
+     * @returns Record<string, string | Record<string, string>>
+     */
     function parseSpecialTagsConfig(configString) {
         let parsed = {}
         if (configString.startsWith("{") && configString.endsWith("}")) {
@@ -29,7 +50,7 @@ Zotero.specialTagsColumn = new function () {
                 if (tagFilterString.length == 0) {
                     continue;
                 }
-                parsed[tagFilterString] = true;
+                parsed[tagFilterString] = tagFilterString;
             }
         }
         return parsed
@@ -102,21 +123,8 @@ Zotero.specialTagsColumn = new function () {
             }
             return item._tags.map((tagItem) => {
                 // looks like tagItem just contains the "tag" field
-                let tagSpec = specialTagsMapping[tagItem.tag]
-                if (!tagSpec) {
-                    return
-                }
-                if (typeof tagSpec === 'string') {
-                    return tagSpec
-                } else {
-                    return tagItem.tag
-                }
+                return specialTagsMapping[tagItem.tag]
             }).filter(tag => tag)
-        }
-
-        function renderSpecialTags(item) {
-            let specialTags = getSpecialTags(item)
-            return specialTags == null ? '' : specialTags.sort().join(", ")
         }
 
         Zotero.log("Loaded special tags: " + JSON.stringify(specialTagsMapping));
@@ -244,13 +252,23 @@ Zotero.specialTagsColumn = new function () {
                     return original_renderCell.apply(this, arguments)
                 }
 
-                const text = SPAN()
-                text.className = 'special-tags-cell cell-text'
-                text.innerText = renderSpecialTags(item)
-
                 const cell = SPAN()
                 cell.className = `cell ${col.className}`
-                cell.append(text)
+
+                let specialTags = getSpecialTags(item)
+                for (const tagSpec of (specialTags || [])) {
+                    const text = SPAN()
+                    text.className = 'special-tags-cell cell-text'
+                    if (typeof tagSpec === 'string') {
+                        text.innerText = tagSpec
+                    } else if (typeof tagSpec === 'object' && tagSpec.innerText) {
+                        text.innerText = tagSpec.innerText
+                        for (const styleName of Object.keys(tagSpec.style)) {
+                            text.style[styleName] = tagSpec.style[styleName]
+                        }
+                    }
+                    cell.append(text)
+                }
 
                 return cell
             }
@@ -262,7 +280,9 @@ Zotero.specialTagsColumn = new function () {
                 if (col.id !== 'zotero-items-column-special-tags') {
                     return original_getCellText.apply(this, arguments)
                 }
-                return renderSpecialTags(this.getRow(row).ref)
+
+                let specialTags = getSpecialTags(this.getRow(row).ref).filter(x => typeof x === 'string')
+                return specialTags == null ? '' : specialTags.sort().join(", ")
             }
         }
 

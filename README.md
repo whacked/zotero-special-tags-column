@@ -43,6 +43,23 @@ escape(JSON.stringify({
 
 ![Special Tags mapping](doc/img/2021-06-20_Selection_001.png)
 
+## styling the mapped tags (Zotero 6+)
+
+you can apply custom styles by passing a CSS object in the JSON string. Example:
+
+```javascript
+escape(JSON.stringify({
+    "5 circles": "⚫⚫⚫⚫⚫",
+    "red ring": "⭕",
+    "ok": {"innerText":"ok","style":{"border-radius":"0.5em","border":"2px solid #0F0","background":"#FFF","color":"#000","font-weight":"bold"}}
+}))
+> %7B%225%20circles%22%3A%22%u26AB%u26AB%u26AB%u26AB%u26AB%22%2C%22red%20ring%22%3A%22%u2B55%22%2C%22ok%22%3A%7B%22innerText%22%3A%22ok%22%2C%22style%22%3A%7B%22border-radius%22%3A%220.5em%22%2C%22border%22%3A%222px%20solid%20%230F0%22%2C%22background%22%3A%22%23FFF%22%2C%22color%22%3A%22%23000%22%2C%22font-weight%22%3A%22bold%22%7D%7D%7D
+```
+
+leads to something like this
+
+![Special Tags styling](doc/img/2022-05-20_Selection_001.png)
+
 # Development
 
 back up your $HOME/Zotero folder if you have one. Zotero will write to it by default. (It's possible to override the location in prefs.js, but this file is created by Zotero).
