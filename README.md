@@ -12,16 +12,15 @@ Download a release from the [releases page](https://github.com/whacked/zotero-sp
 
 let's say you want to use 🐶 and ⛄ as column markers.
 
-```javascript
-escape("🐶🐶🐶🐶🐶,🐶🐶🐶🐶,🐶🐶🐶,🐶🐶,🐶,⛄⛄⛄⛄⛄,⛄⛄⛄⛄,⛄⛄⛄,⛄⛄,⛄")
-> %uD83D%uDC36%uD83D%uDC36%uD83D%uDC36%uD83D%uDC36%uD83D%uDC36%2C%uD83D%uDC36%uD83D%uDC36%uD83D%uDC36%uD83D%uDC36%2C%uD83D%uDC36%uD83D%uDC36%uD83D%uDC36%2C%uD83D%uDC36%uD83D%uDC36%2C%uD83D%uDC36%2C%u26C4%u26C4%u26C4%u26C4%u26C4%2C%u26C4%u26C4%u26C4%u26C4%2C%u26C4%u26C4%u26C4%2C%u26C4%u26C4%2C%u26C4
+```
+🐶🐶🐶🐶🐶,🐶🐶🐶🐶,🐶🐶🐶,🐶🐶,🐶,⛄⛄⛄⛄⛄,⛄⛄⛄⛄,⛄⛄⛄,⛄⛄,⛄
 ```
 
-paste that into the text field
+paste that into the bottom text field
 
-![Edit --> Preferences --> Special tags column](doc/img/2021-06-19_Selection_001.png)
+![Edit --> Preferences --> Special tags column](doc/img/2022-09-02_Selection_001.png)
 
-restart zotero (necessary at the moment)
+The changes should be updated when you close the settings window. **However**, they do not get refreshed Zotero's main window automatically. To refresh, you can switch to a different Zotero folder, and switch back.
 
 your special tags should show up in the Special Tags column for entries that have matches
 
@@ -32,14 +31,15 @@ your special tags should show up in the Special Tags column for entries that hav
 if you don't want to add a new kind of tag, you can map an existing tag to display differently in the Special Tags column by using a JSON value as the input. For example:
 
 ```javascript
-escape(JSON.stringify({
+{
     "brain": "🧠",
     "heart": "❤",
     "radio": "📡",
-    "fish": "🐟",
-}));
-> %7B%22brain%22%3A%22%uD83E%uDDE0%22%2C%22heart%22%3A%22%u2764%22%2C%22radio%22%3A%22%uD83D%uDCE1%22%2C%22fish%22%3A%22%uD83D%uDC1F%22%7D
+    "fish": "🐟"
+}
 ```
+
+**NOTE: make sure you input valid JSON into the text field**
 
 ![Special Tags mapping](doc/img/2021-06-20_Selection_001.png)
 
@@ -48,12 +48,11 @@ escape(JSON.stringify({
 you can apply custom styles by passing a CSS object in the JSON string. Example:
 
 ```javascript
-escape(JSON.stringify({
+{
     "5 circles": "⚫⚫⚫⚫⚫",
     "red ring": "⭕",
     "ok": {"innerText":"ok","style":{"border-radius":"0.5em","border":"2px solid #0F0","background":"#FFF","color":"#000","font-weight":"bold"}}
-}))
-> %7B%225%20circles%22%3A%22%u26AB%u26AB%u26AB%u26AB%u26AB%22%2C%22red%20ring%22%3A%22%u2B55%22%2C%22ok%22%3A%7B%22innerText%22%3A%22ok%22%2C%22style%22%3A%7B%22border-radius%22%3A%220.5em%22%2C%22border%22%3A%222px%20solid%20%230F0%22%2C%22background%22%3A%22%23FFF%22%2C%22color%22%3A%22%23000%22%2C%22font-weight%22%3A%22bold%22%7D%7D%7D
+}
 ```
 
 leads to something like this
