@@ -3,8 +3,13 @@
 
 <overlay id="zotero-special-tags-column-preferences"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-  xmlns:html="http://www.w3.org/1999/xhtml">
-  <prefwindow id="zotero-prefs">
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  >
+  <script type="application/javascript" src="lib.js"/>
+  <prefwindow id="zotero-prefs"
+    onload="initializeForm()"
+    onunload="applyChanges()"
+    >
     <prefpane id="zotero-prefpane-special-tags-column"
             insertafter="zotero-prefpane-advanced"
             label="Special tags column">
@@ -28,6 +33,28 @@
           Must match *exactly*. If your string has non-ascii characters
           you shoud run it through javascript's "escape()" function
         </description>
+
+        <hbox style="width: 500">
+            <listbox id="tag-entries"
+                flex="1"
+                >
+                <listhead>
+                  <listheader label="match tag"/>
+                  <listheader label="display with"/>
+                </listhead>
+                <listcols>
+                  <listcol/>
+                  <listcol/>
+                </listcols>
+            </listbox>
+        </hbox>
+
+        <textbox multiline="true"
+            rows="20"
+            id="deserialized-settings"
+            oninput="handleSettingsStringChange(this)"
+            />
+        
         <!-- don't know why this affects the appearance, but it does! Credit Emiliano Heynes / zotero-better-bibtex. -->
         <label height="20px;" style="margin-bottom: 0px"/>
       </groupbox>

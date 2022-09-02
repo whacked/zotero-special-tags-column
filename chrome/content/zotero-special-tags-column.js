@@ -4,56 +4,12 @@
 Zotero.specialTagsColumn = new function () {
     const SPECIAL_TAGS_COLUMN_ID = 'zotero-items-column-special-tags'
 
-    const trim = (s) => {
-        return s.replace(/^\s*/, '').replace(/\s*$/, '')
-    }
+    const self = this
 
-    function makeElement(tagName) {
-        return document.createElementNS('http://www.w3.org/1999/xhtml', tagName)
-    }
-
-    function SPAN() {
-        return makeElement('span')
-    }
-
-    /**
-     * currently this will support 3 kinds of configs:
-     * 1. comma-delimited string: given a string of "specialTag1, specialTag2, ..."
-     *    the plugin will match "specialTag1", "specialTag2", etc exactly on items containing those tags
-     * 2. JSON mapping of string --> string
-     *    given a mapping of
-     *    - "specialTag1": "renamed1"
-     *    - "specialTag2": "other2"
-     *    it will match items with "specialTag1" and "specialTag2", and render them as
-     *    "renamed1", "other2" respectively
-     * 3. JSON mapping of string --> mapping of string-->string
-     *    given a mapping of
-     *    - "specialTag1": {
-     *          "style": {
-     *              "border": "2px solid blue"
-     *          },
-     *          "innerText": "newTagContent"
-     *      }
-     *    it will match "specialTag1" and render "newTagContent" with a blue border around it
-     * @returns Record<string, string | Record<string, string>>
-     */
-    function parseSpecialTagsConfig(configString) {
-        let parsed = {}
-        if (configString.startsWith("{") && configString.endsWith("}")) {
-            Zotero.log("parsing settings as JSON")
-            parsed = JSON.parse(configString)
-        } else {
-            Zotero.log("parsing settings as comma-delimited string")
-            var tagFilterStringSplit = configString.split(",")
-            for (var i = 0; i < tagFilterStringSplit.length; ++i) {
-                let tagFilterString = trim(tagFilterStringSplit[i])
-                if (tagFilterString.length == 0) {
-                    continue;
-                }
-                parsed[tagFilterString] = tagFilterString;
-            }
-        }
-        return parsed
+    this.importSpecialTagsString = function (rawStringPref) {
+        var tagFilterStringPref = unescape(trim(rawStringPref));
+        Zotero.log("tag filter string: " + tagFilterStringPref);
+        self.specialTagsMapping = parseSpecialTagsConfig(tagFilterStringPref)
     }
 
     /**
@@ -67,10 +23,7 @@ Zotero.specialTagsColumn = new function () {
 
         // returns undefined/null if no matching pref
         var prefManager = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-        var tagFilterStringPref = unescape(trim(prefManager.getCharPref("extensions.zotero.special-tags-column.tags-string") || ""));
-        Zotero.log("tag filter string: " + tagFilterStringPref);
-        var specialTagsMapping = parseSpecialTagsConfig(tagFilterStringPref)
-
+        self.importSpecialTagsString(prefManager.getCharPref("extensions.zotero.special-tags-column.tags-string") || "")
         function getSpecialTags(item) {  // given an item, return Array<string> where tags are among those defined in specialTagsMapping
             /** 
              * item example: (note that _tags is hidden!)
@@ -123,11 +76,11 @@ Zotero.specialTagsColumn = new function () {
             }
             return item._tags.map((tagItem) => {
                 // looks like tagItem just contains the "tag" field
-                return specialTagsMapping[tagItem.tag]
+                return self.specialTagsMapping[tagItem.tag]
             }).filter(tag => tag)
         }
 
-        Zotero.log("Loaded special tags: " + JSON.stringify(specialTagsMapping));
+        Zotero.log("Loaded special tags: " + JSON.stringify(self.specialTagsMapping));
 
         // for the monkey patch technique, see $patch$ in
         // https://github.com/retorquere/zotero-better-bibtex/blob/dff2485/content/better-bibtex.ts#L276
@@ -261,11 +214,8 @@ Zotero.specialTagsColumn = new function () {
                     text.className = 'special-tags-cell cell-text'
                     if (typeof tagSpec === 'string') {
                         text.innerText = tagSpec
-                    } else if (typeof tagSpec === 'object' && tagSpec.innerText) {
-                        text.innerText = tagSpec.innerText
-                        for (const styleName of Object.keys(tagSpec.style)) {
-                            text.style[styleName] = tagSpec.style[styleName]
-                        }
+                    } else if (isComplexTagSpec(tagSpec)) {
+                        applyTagSpecToElement(text, tagSpec)
                     }
                     cell.append(text)
                 }

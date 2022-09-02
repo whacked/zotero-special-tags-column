@@ -7,6 +7,7 @@ in pkgs.mkShell {
 
   buildInputs = [
     pkgs.pastel
+    pkgs.nodejs
   ] ++ (if (pkgs.stdenv.isLinux) then [ pkgs.zotero ] else []);
 
   shellHook = (if (pkgs.stdenv.isDarwin) then ''
